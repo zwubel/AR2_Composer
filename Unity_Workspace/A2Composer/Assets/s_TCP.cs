@@ -8,7 +8,7 @@ public class Marker{
     private float posY;
     private float angle;
 
-    public Marker(char ID, float posX, float posY, float angle){
+    public Marker(int ID, float posX, float posY, float angle){
         this.ID = ID;
         this.posX = posX;
         this.posY = posY;
