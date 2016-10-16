@@ -2,72 +2,36 @@
 using System;
 using System.Net.Sockets;
 
-public class Marker{
-    private int ID;
-    private float posX;
-    private float posY;
-    private float angle;
-
-    public Marker(int ID, float posX, float posY, float angle){
-        this.ID = ID;
-        this.posX = posX;
-        this.posY = posY;
-        this.angle = angle;
-    }
-
-    public int getID(){
-        return this.ID;
-    }
-
-    public float getPosX(){
-        return this.posX;
-    }
-
-    public float getPosY(){
-        return this.posY;
-    }
-
-    public float getAngle(){
-        return this.angle;
-    }
-
-    public void setID(int ID){
-        this.ID = ID;
-    }
-
-    public string toStr(){
-        return "Marker " + this.ID + "data:\n" +
-            "\tPosition: (" + this.posX + "/" + this.posY + ")\n" +
-            "\tAngle: " + this.angle;
-    }
-}
-
 public class readInNetworkData : MonoBehaviour {
     Boolean socketReady = false;
     TcpClient mySocket;
     NetworkStream theStream;
-    String Host = "192.168.0.5";
-    Int32 Port = 10000;
-    int bytesPerMarker = 16;
     byte[] buffer;
-    int bufferLength = 16;//4100; // 16 bytes * 256 markers (maximum) + 
-    public Marker[] markers;
-    int maxMarkerCount = 1;//256;
+    int bufferLength;
+    Marker[] markers;
     long frameCounter = 0;
     bool markersSetForFrame = false;
 
-    // Return markers array
+    [Header("Socket Settings")]
+    public String Host = "192.168.0.5";
+    public Int32 Port = 10000;
+    [Header("Data Stream Settings")]
+    public int maxMarkerCount = 1;
+    public int bytesPerMarker = 16;
+
+    // Return markers array (used by setupScene.cs)
     public Marker[] getMarkers() {
         return markers;
     }
 
-    // Has the markers array already been filled with data?
+    // Have markers been set for current frame?
     public bool markersSet(){
         return markersSetForFrame;
     }
 
     // Initialization
     void Start(){
+        bufferLength = bytesPerMarker * maxMarkerCount;
         markers = new Marker[maxMarkerCount];
         setupSocket();
     }

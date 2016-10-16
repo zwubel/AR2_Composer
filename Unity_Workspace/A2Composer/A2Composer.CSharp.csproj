@@ -69,11 +69,13 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Marker.cs" />
     <Compile Include="Assets\OvrvisionPro\Demos\CamImageCube.cs" />
     <Compile Include="Assets\OvrvisionPro\Scripts\COvrvisionUnity.cs" />
     <Compile Include="Assets\OvrvisionPro\Scripts\Ovrvision.cs" />
     <Compile Include="Assets\OvrvisionPro\Scripts\OvrvisionHandTracker.cs" />
     <Compile Include="Assets\OvrvisionPro\Scripts\OvrvisionTracker.cs" />
+    <Compile Include="Assets\printFPS.cs" />
     <Compile Include="Assets\readInNetworkData.cs" />
     <Compile Include="Assets\setupScene.cs" />
   </ItemGroup>

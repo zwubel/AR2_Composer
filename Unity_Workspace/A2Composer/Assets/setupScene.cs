@@ -3,27 +3,33 @@ using System.Collections;
 
 public class setupScene : MonoBehaviour {
     GameObject[] markers;
-    int maxMarkers = 16;
-    float xStretch = 10.0f;
-    float zStretch = 5.0f;
     readInNetworkData networkData;
     Marker[] markerArray;
-    float deltaTime = 0.0f;
+    
+    [Header("Scene Settings")]
+    public int maxMarkers = 16;
+    public float planeScaleX = 10.0f;
+    public float planeScaleZ = 5.0f;
+    public float markerScale = 2.0f;
 
     // Use this for initialization
     void Start () {
-        Vector3 planeScale = new Vector3(xStretch, 1.0f, zStretch);
+        // Initialization
+        Vector3 planeScale = new Vector3(planeScaleX, 1.0f, planeScaleZ);
         markers = new GameObject[maxMarkers];
+
+        // Create plane
         GameObject table = GameObject.CreatePrimitive(PrimitiveType.Plane);
         table.transform.localScale = planeScale;
+
+        // Create markers (cubes)
         for (int i = 0; i < maxMarkers; i++) {
             markers[i] = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            //markers[i].SetActive(false);
+            markers[i].SetActive(false);
             markers[i].transform.name = "Marker" + i;
-            markers[i].transform.localScale = new Vector3(2.0f, 2.0f, 2.0f);
-            markers[i].transform.Translate(0.0f, 1.0f, 0.0f);
-
-            //TextMesh textMesh = new TextMesh();
+            markers[i].transform.localScale = new Vector3(markerScale, markerScale, markerScale);
+            //markers[i].transform.Translate(0.0f, 1.0f, 0.0f);
+            
             GameObject text = new GameObject();
             text.transform.SetParent(markers[i].transform);
             text.AddComponent<TextMesh>().text = ""+i;
@@ -38,37 +44,22 @@ public class setupScene : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        deltaTime += (Time.deltaTime - deltaTime) * 0.1f;
-        while (!networkData.markersSet()){
-            wait();
-        }
-        markerArray = networkData.getMarkers();
-        for(int i = 0; i < markerArray.Length; i++){
-            Marker cur = markerArray[i];
-            if (cur.getID() == -1){
-                break;
+        if (networkData.markersSet()){
+            markerArray = networkData.getMarkers();
+            for (int i = 0; i < markerArray.Length; i++){
+                Marker cur = markerArray[i];
+                if (cur.getID() == -1)
+                {
+                    break;
+                }
+                markers[i].SetActive(true);
+                markers[i].transform.position = new Vector3(cur.getPosX(), 0.0f, cur.getPosY());
+                markers[i].transform.rotation = new Quaternion(0.0f, cur.getAngle(), 0.0f, 0.0f);
             }
-            markers[i].transform.position = new Vector3(cur.getPosX(), 0.0f, cur.getPosY());
-            markers[i].transform.rotation = new Quaternion(0.0f, cur.getAngle(), 0.0f, 0.0f);
         }
-	}
+    }
 
     IEnumerator wait(){
         yield return new WaitForSeconds(0.001f);
-    }
-
-    void OnGUI(){
-        int w = Screen.width, h = Screen.height;
-
-        GUIStyle style = new GUIStyle();
-
-        Rect rect = new Rect(0, 0, w, h * 2 / 100);
-        style.alignment = TextAnchor.UpperLeft;
-        style.fontSize = h * 2 / 100;
-        style.normal.textColor = new Color(0.0f, 0.0f, 0.5f, 1.0f);
-        float msec = deltaTime * 1000.0f;
-        float fps = 1.0f / deltaTime;
-        string text = string.Format("{0:0.0} ms ({1:0.} fps)", msec, fps);
-        GUI.Label(rect, text, style);
     }
 }
