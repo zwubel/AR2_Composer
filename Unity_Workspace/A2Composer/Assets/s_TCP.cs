@@ -29,10 +29,12 @@ public class s_TCP : MonoBehaviour{
     NetworkStream theStream;
     String Host = "192.168.0.5";
     Int32 Port = 10000;
+    int bytesPerMarker = 16;
     byte[] buffer;
-    int bufferLength = 26;//3328; // 13 bytes * 256 markers (maximum)
+    int bufferLength = 16;//4100; // 16 bytes * 256 markers (maximum) + 
     Marker[] markers;
-    int maxMarkerCount = 2;//256;
+    int maxMarkerCount = 1;//256;
+    long frameCounter = 0;
 
     // Initialization
     void Start(){
@@ -60,20 +62,34 @@ public class s_TCP : MonoBehaviour{
             int bytesRead = theStream.Read(buffer, 0, bufferLength); // Read socket
             if (bytesRead == bufferLength) { // Number of bytes read equal to expected number?
                 Debug.Log("bytesRead is equal to bufferLength.");
-                for (int i=0; i<bufferLength; i += 13){ // 13 bytes per marker needed                    
-                    int curID = System.BitConverter.ToInt32(buffer, i); // ID
-                    if (curID.Equals('0')){ // End of frame reached?
-                        Debug.Log("End of frame (last masker) reached, aborting.");
-                        break;
+                for (int i = 0; i < bufferLength; i += bytesPerMarker){
+                    if (transform.name.Equals("Marker" + i / bytesPerMarker)){
+                        int curID = System.BitConverter.ToInt32(buffer, i); // ID
+                        if (curID == -1){ // End of frame reached?
+                            Debug.Log("Last masker reached, suspending loop for current frame " + frameCounter + ".");
+                            frameCounter++;
+                            break;
+                        }
+                        float curPosX = System.BitConverter.ToSingle(buffer, i + 4); // X-position
+                        float curPosY = System.BitConverter.ToSingle(buffer, i + 8); // Y-position
+                        float curAngle = System.BitConverter.ToSingle(buffer, i + 12); // Angle
+                        //markers[i / 16] = new Marker(curID, curPosX, curPosY, curAngle); // Add new marker to array
+                        //Debug.Log(markers[i / 16].toStr(i / 16)); // Print debug message containing marker data
+
+                        // For testing only
+                        string markerStr =  "Marker " + i/bytesPerMarker + " data:\n" +
+                                            "\tID: " + curID + "\n" +
+                                            "\tPosition: (" + curPosX + "/" + curPosY + ")\n" +
+                                            "\tAngle: " + curAngle + "\n-----------------------";
+                        Debug.Log(markerStr);
+
+                        // Transforming the game object (cube)
+                        transform.Translate(curPosX, curPosY, 0);
+                        transform.Rotate(transform.up, curAngle);
                     }
-                    float curPosX = System.BitConverter.ToSingle(buffer, i + 4); // X-position                    
-                    float curPosY = System.BitConverter.ToSingle(buffer, i + 4); // Y-position
-                    float curAngle = System.BitConverter.ToSingle(buffer, i + 4); // Angle
-                    markers[i / 13] = new Marker(curID, curPosX, curPosY, curAngle); // Add new marker to array
-                    Debug.Log(markers[i / 13].toStr(i / 13)); // Print debug message containing marker data
                 }
             }else{
-                Debug.Log("Number of bytes read from the stream not equal to buffer length!");
+                Debug.Log("Number of bytes read from stream not equal to buffer length!");
             }
         }
     }
