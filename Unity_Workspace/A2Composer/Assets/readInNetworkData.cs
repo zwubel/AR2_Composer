@@ -15,16 +15,15 @@ public class Marker{
         this.angle = angle;
     }
 
-    public string toStr(int markerNumber){
-        return "Marker " + markerNumber + "data:\n" +
-            "\tID: " + this.ID + "\n" +
+    public string toStr(){
+        return "Marker " + this.ID + "data:\n" +
             "\tPosition: (" + this.posX + "/" + this.posY + ")\n" +
-            "\tAngle: " + this.angle + "\n-----------------------";
+            "\tAngle: " + this.angle;
     }
 }
 
-public class s_TCP : MonoBehaviour{
-    internal Boolean socketReady = false;
+public class readInNetworkData : MonoBehaviour {
+    Boolean socketReady = false;
     TcpClient mySocket;
     NetworkStream theStream;
     String Host = "192.168.0.5";
@@ -32,9 +31,20 @@ public class s_TCP : MonoBehaviour{
     int bytesPerMarker = 16;
     byte[] buffer;
     int bufferLength = 16;//4100; // 16 bytes * 256 markers (maximum) + 
-    Marker[] markers;
+    public Marker[] markers;
     int maxMarkerCount = 1;//256;
     long frameCounter = 0;
+    bool markersSetForFrame = false;
+
+    // Return markers array
+    public Marker[] getMarkers() {
+        return markers;
+    }
+
+    // Has the markers array already been filled with data?
+    public bool markersSet(){
+        return markersSetForFrame;
+    }
 
     // Initialization
     void Start(){
@@ -63,31 +73,31 @@ public class s_TCP : MonoBehaviour{
             if (bytesRead == bufferLength) { // Number of bytes read equal to expected number?
                 Debug.Log("bytesRead is equal to bufferLength.");
                 for (int i = 0; i < bufferLength; i += bytesPerMarker){
-                    if (transform.name.Equals("Marker" + i / bytesPerMarker)){
-                        int curID = System.BitConverter.ToInt32(buffer, i); // ID
-                        if (curID == -1){ // End of frame reached?
-                            Debug.Log("Last masker reached, suspending loop for current frame " + frameCounter + ".");
-                            frameCounter++;
-                            break;
-                        }
+                    int curID = System.BitConverter.ToInt32(buffer, i); // ID
+                    if (curID == -1){ // End of frame reached?
+                        Debug.Log("Last masker reached, suspending loop for current frame " + frameCounter + ".");
+                        frameCounter++;
+                        break;
+                    }else if (transform.name.Equals("Marker" + i / bytesPerMarker)){
                         float curPosX = System.BitConverter.ToSingle(buffer, i + 4); // X-position
                         float curPosY = System.BitConverter.ToSingle(buffer, i + 8); // Y-position
                         float curAngle = System.BitConverter.ToSingle(buffer, i + 12); // Angle
-                        //markers[i / 16] = new Marker(curID, curPosX, curPosY, curAngle); // Add new marker to array
+                        markers[i / bytesPerMarker] = new Marker(curID, curPosX, curPosY, curAngle); // Add new marker to array
                         //Debug.Log(markers[i / 16].toStr(i / 16)); // Print debug message containing marker data
 
                         // For testing only
-                        string markerStr =  "Marker " + i/bytesPerMarker + " data:\n" +
-                                            "\tID: " + curID + "\n" +
-                                            "\tPosition: (" + curPosX + "/" + curPosY + ")\n" +
-                                            "\tAngle: " + curAngle + "\n-----------------------";
-                        Debug.Log(markerStr);
+                        //string markerStr =  "Marker " + i/bytesPerMarker + " data:\n" +
+                        //                    "\tID: " + curID + "\n" +
+                        //                    "\tPosition: (" + curPosX + "/" + curPosY + ")\n" +
+                        //                    "\tAngle: " + curAngle + "\n-----------------------";
+                        //Debug.Log(markerStr);
 
-                        // Transforming the game object (cube)
-                        transform.Translate(curPosX, curPosY, 0);
-                        transform.Rotate(transform.up, curAngle);
+                        //// Transforming the game object (cube)
+                        //transform.Translate(curPosX, curPosY, 0);
+                        //transform.Rotate(transform.up, curAngle);
                     }
                 }
+                markersSetForFrame = true;
             }else{
                 Debug.Log("Number of bytes read from stream not equal to buffer length!");
             }

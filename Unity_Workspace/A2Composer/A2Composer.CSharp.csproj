@@ -74,7 +74,8 @@
     <Compile Include="Assets\OvrvisionPro\Scripts\Ovrvision.cs" />
     <Compile Include="Assets\OvrvisionPro\Scripts\OvrvisionHandTracker.cs" />
     <Compile Include="Assets\OvrvisionPro\Scripts\OvrvisionTracker.cs" />
-    <Compile Include="Assets\s_TCP.cs" />
+    <Compile Include="Assets\readInNetworkData.cs" />
+    <Compile Include="Assets\setupScene.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\OvrvisionPro\Resources\Shaders\ovChromaticMask.shader" />
