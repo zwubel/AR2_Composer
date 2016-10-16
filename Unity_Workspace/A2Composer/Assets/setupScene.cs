@@ -6,6 +6,9 @@ public class setupScene : MonoBehaviour {
     int maxMarkers = 16;
     float xStretch = 10.0f;
     float zStretch = 5.0f;
+    readInNetworkData networkData;
+    Marker[] markerArray;
+    float deltaTime = 0.0f;
 
     // Use this for initialization
     void Start () {
@@ -30,10 +33,42 @@ public class setupScene : MonoBehaviour {
             text.GetComponent<TextMesh>().transform.position = new Vector3(-0.6f, 0.0f, 0.6f);
             markers[i].GetComponent<Renderer>().material.color = new Color(0, 255, 0);
         }
-	}
+        networkData = gameObject.GetComponent<readInNetworkData>();
+    }
 	
 	// Update is called once per frame
 	void Update () {
-	
+        deltaTime += (Time.deltaTime - deltaTime) * 0.1f;
+        while (!networkData.markersSet()){
+            wait();
+        }
+        markerArray = networkData.getMarkers();
+        for(int i = 0; i < markerArray.Length; i++){
+            Marker cur = markerArray[i];
+            if (cur.getID() == -1){
+                break;
+            }
+            markers[i].transform.position = new Vector3(cur.getPosX(), 0.0f, cur.getPosY());
+            markers[i].transform.rotation = new Quaternion(0.0f, cur.getAngle(), 0.0f, 0.0f);
+        }
 	}
+
+    IEnumerator wait(){
+        yield return new WaitForSeconds(0.001f);
+    }
+
+    void OnGUI(){
+        int w = Screen.width, h = Screen.height;
+
+        GUIStyle style = new GUIStyle();
+
+        Rect rect = new Rect(0, 0, w, h * 2 / 100);
+        style.alignment = TextAnchor.UpperLeft;
+        style.fontSize = h * 2 / 100;
+        style.normal.textColor = new Color(0.0f, 0.0f, 0.5f, 1.0f);
+        float msec = deltaTime * 1000.0f;
+        float fps = 1.0f / deltaTime;
+        string text = string.Format("{0:0.0} ms ({1:0.} fps)", msec, fps);
+        GUI.Label(rect, text, style);
+    }
 }

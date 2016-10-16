@@ -15,6 +15,26 @@ public class Marker{
         this.angle = angle;
     }
 
+    public int getID(){
+        return this.ID;
+    }
+
+    public float getPosX(){
+        return this.posX;
+    }
+
+    public float getPosY(){
+        return this.posY;
+    }
+
+    public float getAngle(){
+        return this.angle;
+    }
+
+    public void setID(int ID){
+        this.ID = ID;
+    }
+
     public string toStr(){
         return "Marker " + this.ID + "data:\n" +
             "\tPosition: (" + this.posX + "/" + this.posY + ")\n" +
@@ -77,6 +97,7 @@ public class readInNetworkData : MonoBehaviour {
                     if (curID == -1){ // End of frame reached?
                         Debug.Log("Last masker reached, suspending loop for current frame " + frameCounter + ".");
                         frameCounter++;
+                        markers[i / bytesPerMarker + 1].setID(-1);
                         break;
                     }else if (transform.name.Equals("Marker" + i / bytesPerMarker)){
                         float curPosX = System.BitConverter.ToSingle(buffer, i + 4); // X-position
