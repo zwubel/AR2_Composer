@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class Marker : MonoBehaviour {
+public class Marker {
 
         private int ID;
         private float posX;
@@ -42,7 +42,7 @@ public class Marker : MonoBehaviour {
 
         public string toStr()
         {
-            return "Marker " + this.ID + "data:\n" +
+            return "Marker " + this.ID + " data:\n" +
                 "\tPosition: (" + this.posX + "/" + this.posY + ")\n" +
                 "\tAngle: " + this.angle;
         }

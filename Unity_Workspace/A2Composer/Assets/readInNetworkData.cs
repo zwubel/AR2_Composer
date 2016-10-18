@@ -11,6 +11,7 @@ public class readInNetworkData : MonoBehaviour {
     Marker[] markers;
     long frameCounter = 0;
     bool markersSetForFrame = false;
+    bool oneMarkerSet = false;
 
     [Header("Socket Settings")]
     public String Host = "192.168.0.5";
@@ -31,8 +32,8 @@ public class readInNetworkData : MonoBehaviour {
 
     // Initialization
     void Start(){
-        bufferLength = bytesPerMarker * maxMarkerCount;
-        markers = new Marker[maxMarkerCount];
+        bufferLength = bytesPerMarker * maxMarkerCount + 4;
+        markers = new Marker[maxMarkerCount + 1];
         setupSocket();
     }
 
@@ -49,6 +50,8 @@ public class readInNetworkData : MonoBehaviour {
 
     // Is called once every frame
     void Update(){
+        markersSetForFrame = false;
+        oneMarkerSet = false;
         // Is the socket ready and does it have data waiting?
         if (socketReady && theStream.DataAvailable){
             Debug.Log("Socket is ready and stream data is available.");
@@ -61,29 +64,21 @@ public class readInNetworkData : MonoBehaviour {
                     if (curID == -1){ // End of frame reached?
                         Debug.Log("Last masker reached, suspending loop for current frame " + frameCounter + ".");
                         frameCounter++;
-                        markers[i / bytesPerMarker + 1].setID(-1);
+                        markers[i / bytesPerMarker + 1] = new Marker(-1, 0.0f, 0.0f, 0.0f);
                         break;
-                    }else if (transform.name.Equals("Marker" + i / bytesPerMarker)){
+                    }else{ // if (curID == i / bytesPerMarker + 1){
                         float curPosX = System.BitConverter.ToSingle(buffer, i + 4); // X-position
                         float curPosY = System.BitConverter.ToSingle(buffer, i + 8); // Y-position
                         float curAngle = System.BitConverter.ToSingle(buffer, i + 12); // Angle
                         markers[i / bytesPerMarker] = new Marker(curID, curPosX, curPosY, curAngle); // Add new marker to array
-                        //Debug.Log(markers[i / 16].toStr(i / 16)); // Print debug message containing marker data
-
-                        // For testing only
-                        //string markerStr =  "Marker " + i/bytesPerMarker + " data:\n" +
-                        //                    "\tID: " + curID + "\n" +
-                        //                    "\tPosition: (" + curPosX + "/" + curPosY + ")\n" +
-                        //                    "\tAngle: " + curAngle + "\n-----------------------";
-                        //Debug.Log(markerStr);
-
-                        //// Transforming the game object (cube)
-                        //transform.Translate(curPosX, curPosY, 0);
-                        //transform.Rotate(transform.up, curAngle);
+                        oneMarkerSet = true;
+                        Debug.Log(markers[i / bytesPerMarker].toStr()); // Print debug message containing marker data
                     }
                 }
-                markersSetForFrame = true;
-            }else{
+                if(oneMarkerSet)
+                    markersSetForFrame = true;
+            }
+            else{
                 Debug.Log("Number of bytes read from stream not equal to buffer length!");
             }
         }
