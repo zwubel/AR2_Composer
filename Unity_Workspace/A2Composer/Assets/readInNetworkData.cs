@@ -10,8 +10,8 @@ public class readInNetworkData : MonoBehaviour {
     int bufferLength;
     Marker[] markers;
     long frameCounter = 0;
-    bool markersSetForFrame = false;
     bool oneMarkerSet = false;
+    setupScene setupScene;
 
     [Header("Socket Settings")]
     public String Host = "192.168.0.5";
@@ -25,15 +25,11 @@ public class readInNetworkData : MonoBehaviour {
         return markers;
     }
 
-    // Have markers been set for current frame?
-    public bool markersSet(){
-        return markersSetForFrame;
-    }
-
     // Initialization
     void Start(){
         bufferLength = bytesPerMarker * maxMarkerCount + 4;
         markers = new Marker[maxMarkerCount + 1];
+        setupScene = gameObject.GetComponent<setupScene>();
         setupSocket();
     }
 
@@ -50,7 +46,7 @@ public class readInNetworkData : MonoBehaviour {
 
     // Is called once every frame
     void Update(){
-        markersSetForFrame = false;
+        setupScene.setMarkerArraySet(false);
         oneMarkerSet = false;
         // Is the socket ready and does it have data waiting?
         if (socketReady && theStream.DataAvailable){
@@ -66,7 +62,9 @@ public class readInNetworkData : MonoBehaviour {
                         frameCounter++;
                         markers[i / bytesPerMarker + 1] = new Marker(-1, 0.0f, 0.0f, 0.0f);
                         break;
-                    }else{ // if (curID == i / bytesPerMarker + 1){
+                    }else if(curID < 0){
+                        Debug.LogError("Marker ID not valid: " + curID);
+                    }else { // if (curID == i / bytesPerMarker + 1){
                         float curPosX = System.BitConverter.ToSingle(buffer, i + 4); // X-position
                         float curPosY = System.BitConverter.ToSingle(buffer, i + 8); // Y-position
                         float curAngle = System.BitConverter.ToSingle(buffer, i + 12); // Angle
@@ -76,10 +74,10 @@ public class readInNetworkData : MonoBehaviour {
                     }
                 }
                 if(oneMarkerSet)
-                    markersSetForFrame = true;
+                    setupScene.setMarkerArraySet(true);
             }
             else{
-                Debug.Log("Number of bytes read from stream not equal to buffer length!");
+                Debug.LogError("Number of bytes read from stream NOT equal to buffer length!");
             }
         }
     }
