@@ -1,4 +1,4 @@
-﻿#define DEBUGGING
+﻿//#define BYPASSNETWORK
 using UnityEngine;
 using System.Collections;
 
@@ -8,33 +8,37 @@ public class setupScene : MonoBehaviour {
     Marker[] networkMarkers;
     Marker[] networkMarkersPrevFrame;
     bool markerArraySet = false;
-    
-    #if(DEBUGGING)
+    #if (BYPASSNETWORK)
+    public bool bypassNetworkActivated = true;
+    #else
+    public bool bypassNetworkActivated = false;
+    #endif
+
+    #if (BYPASSNETWORK)
     float frameIncrement = 0.0f;
     #endif
 
-    [Header("Scene Settings")]
+    [Header("Scene Settings")]    
     public int maxMarkers = 256;
-    public float planeScaleX = 1.0f;
-    public float planeScaleZ = 0.5f;
+    //public Vector3 planeScale = new Vector3(-0.14f, 0.782f, 0.08f);
+    //public Vector3 planePosition = new Vector3(-0.146f, 0.782f, 0.084f);
     public float markerScale = 0.5f;
+    
 
     // Use this for initialization
     void Start() {
         // Initialization
-        Vector3 planeScale = new Vector3(planeScaleX, 1.0f, planeScaleZ);
         markerCubes = new GameObject[maxMarkers];
 
         // Create parent object (plane and cubes are attached to this)
         GameObject parent = new GameObject();
-        parent.transform.position = new Vector3(0.88f, 0.61f, 2.63f);
         parent.transform.name = "Table Object";
 
         // Create plane
         GameObject table = GameObject.CreatePrimitive(PrimitiveType.Plane);
         table.transform.SetParent(parent.transform);
-        table.transform.localScale = planeScale;
-        table.transform.position = new Vector3(0.0f, -1.0f * markerScale / 2, 0.0f);
+        //table.transform.localScale = planeScale;
+        //table.transform.position = planePosition;
 
         // Create markers (cubes)
         for (int i = 0; i < maxMarkers; i++) {
@@ -54,7 +58,7 @@ public class setupScene : MonoBehaviour {
         markerArraySet = state;
     }
 
-    #if(DEBUGGING)
+#if (BYPASSNETWORK)
     private void testMarkerMovement() {
         frameIncrement += 0.0001f;
         int numberOfMarkers = 5;
@@ -66,18 +70,18 @@ public class setupScene : MonoBehaviour {
         networkMarkers[4] = new Marker(-1, 0.0f, 0.0f, 0.0f);
         markerArraySet = true;
     }
-    #endif
+#endif
 
     // Update is called once per frame
     void Update () {
-        #if (DEBUGGING)
+#if (BYPASSNETWORK)
         testMarkerMovement();
-        #endif
+#endif
         if (markerArraySet){
             networkMarkersPrevFrame = networkMarkers;
-            #if (!DEBUGGING)
+#if (!BYPASSNETWORK)
             networkMarkers = networkData.getMarkers();
-            #endif
+#endif
             for (int i = 0; i < networkMarkers.Length; i++){
                 Marker cur = networkMarkers[i];
                 if (cur.getID() == -1){
