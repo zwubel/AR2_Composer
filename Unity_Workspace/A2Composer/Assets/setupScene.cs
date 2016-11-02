@@ -8,9 +8,10 @@ public class setupScene : MonoBehaviour {
     Marker[] networkMarkers;
     Marker[] networkMarkersPrevFrame;
     bool markerArraySet = false;
+    GameObject table;
     #if (BYPASSNETWORK)
     public bool bypassNetworkActivated = true;
-    #else
+#else
     public bool bypassNetworkActivated = false;
     #endif
 
@@ -23,7 +24,20 @@ public class setupScene : MonoBehaviour {
     //public Vector3 planeScale = new Vector3(-0.14f, 0.782f, 0.08f);
     //public Vector3 planePosition = new Vector3(-0.146f, 0.782f, 0.084f);
     public float markerScale = 0.5f;
-    
+    [Header("Calibration Data")]
+    public Vector3 calPos = new Vector3(0, 0, 0);
+    public Quaternion calRot = new Quaternion(0, 0, 0, 0);
+    public Vector3 calScale = new Vector3(0, 0, 0);
+    public Component OVR;
+
+    public void calibrationDone(){
+        calPos = OVR.transform.position;
+        calScale = OVR.transform.localScale;
+        calRot = OVR.transform.rotation;
+        table.transform.localScale = calScale;
+        table.transform.position = calPos;
+        table.transform.localRotation = calRot;
+    }
 
     // Use this for initialization
     void Start() {
@@ -35,10 +49,11 @@ public class setupScene : MonoBehaviour {
         parent.transform.name = "Table Object";
 
         // Create plane
-        GameObject table = GameObject.CreatePrimitive(PrimitiveType.Plane);
+        table = GameObject.CreatePrimitive(PrimitiveType.Plane);
         table.transform.SetParent(parent.transform);
-        //table.transform.localScale = planeScale;
-        //table.transform.position = planePosition;
+        table.transform.localScale = calScale;
+        table.transform.position = calPos;
+        table.transform.localRotation = calRot;
 
         // Create markers (cubes)
         for (int i = 0; i < maxMarkers; i++) {
