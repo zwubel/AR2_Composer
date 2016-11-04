@@ -1,5 +1,4 @@
-﻿//#define BYPASSNETWORK
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 
 public class setupScene : MonoBehaviour {
@@ -9,15 +8,8 @@ public class setupScene : MonoBehaviour {
     Marker[] networkMarkersPrevFrame;
     bool markerArraySet = false;
     GameObject table;
-    #if (BYPASSNETWORK)
-    public bool bypassNetworkActivated = true;
-#else
-    public bool bypassNetworkActivated = false;
-    #endif
-
-    #if (BYPASSNETWORK)
+    public bool bypassNetwork = true;
     float frameIncrement = 0.0f;
-    #endif
 
     [Header("Scene Settings")]    
     public int maxMarkers = 256;
@@ -73,8 +65,7 @@ public class setupScene : MonoBehaviour {
         markerArraySet = state;
     }
 
-#if (BYPASSNETWORK)
-    private void testMarkerMovement() {
+    private void simulateMarkerMovement() {
         frameIncrement += 0.0001f;
         int numberOfMarkers = 5;
         networkMarkers = new Marker[numberOfMarkers];
@@ -85,18 +76,16 @@ public class setupScene : MonoBehaviour {
         networkMarkers[4] = new Marker(-1, 0.0f, 0.0f, 0.0f);
         markerArraySet = true;
     }
-#endif
+
 
     // Update is called once per frame
     void Update () {
-#if (BYPASSNETWORK)
-        testMarkerMovement();
-#endif
-        if (markerArraySet){
-            networkMarkersPrevFrame = networkMarkers;
-#if (!BYPASSNETWORK)
+        if (bypassNetwork) {
+            simulateMarkerMovement();
             networkMarkers = networkData.getMarkers();
-#endif
+        }
+        else if (markerArraySet){
+            networkMarkersPrevFrame = networkMarkers;
             for (int i = 0; i < networkMarkers.Length; i++){
                 Marker cur = networkMarkers[i];
                 if (cur.getID() == -1){
