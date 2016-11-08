@@ -131,9 +131,10 @@ public class Ovrvision : MonoBehaviour
 		CameraPlaneLeft.transform.localScale = new Vector3(OvrPro.aspectW, -OvrPro.aspectH, 1.0f);
 		CameraPlaneRight.transform.localScale = new Vector3(OvrPro.aspectW, -OvrPro.aspectH, 1.0f);
 		CameraPlaneLeft.transform.localPosition = new Vector3(-0.032f, 0.0f, OvrPro.GetFloatPoint() + IMAGE_ZOFFSET);
-		CameraPlaneRight.transform.localPosition = new Vector3(CameraRightGap.x - 0.040f, 0.0f, OvrPro.GetFloatPoint() + IMAGE_ZOFFSET);
+        //CameraPlaneRight.transform.localPosition = new Vector3(CameraRightGap.x - 0.040f, 0.0f, OvrPro.GetFloatPoint() + IMAGE_ZOFFSET);
+        CameraPlaneRight.transform.localPosition = new Vector3(-0.005f, 0.02565f, OvrPro.GetFloatPoint() + IMAGE_ZOFFSET);
 
-		UnityEngine.VR.InputTracking.Recenter();
+        UnityEngine.VR.InputTracking.Recenter();
 
 		if (useOvrvisionTrack)
 		{
