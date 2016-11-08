@@ -25,16 +25,16 @@ public class setupScene : MonoBehaviour {
     //public Vector3 planePosition = new Vector3(-0.146f, 0.782f, 0.084f);
     public float markerScale = 0.5f;
     [Header("Calibration Data")]
-    public Vector3 calPos = new Vector3(0, 0, 0);
-    public Quaternion calRot = new Quaternion(0, 0, 0, 0);
-    public Vector3 calScale = new Vector3(0, 0, 0);
+    public Vector3 calPos = new Vector3(0.0f, 0.0f, 0.0f);
+    public Quaternion calRot = new Quaternion(0.0f, 0.0f, 0.0f, 0.0f);
+    public Vector3 calScale = new Vector3(1.0f, 1.0f, 1.0f);
     public Component OVR;
 
     public void calibrationDone(){
         calPos = OVR.transform.position;
-        calScale = OVR.transform.localScale;
+        //calScale = OVR.transform.localScale;
         calRot = OVR.transform.rotation;
-        table.transform.localScale = calScale;
+        //table.transform.localScale = calScale;
         table.transform.position = calPos;
         table.transform.localRotation = calRot;
     }
