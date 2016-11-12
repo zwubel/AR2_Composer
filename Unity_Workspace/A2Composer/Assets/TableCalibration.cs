@@ -10,9 +10,11 @@ public class TableCalibration : MonoBehaviour {
     private GameObject m600;
     private GameObject m800;
     public setupScene setupScene;
+    public float planeZOffset;
 
     // Use this for initialization
     void Start () {
+        planeZOffset = -0.15f;
         positions = new Vector3[4];
         setPositions = new bool[4] { false, false, false, false };
         m200 = GameObject.Find("OvrvisionTracker200");
@@ -34,24 +36,28 @@ public class TableCalibration : MonoBehaviour {
     public void attemptCalibration() {
         if (isMarkerVisible(m200.transform.position)){
             positions[0] = m200.transform.position;
+            positions[0].y += planeZOffset;
             setPositions[0] = true;
             m200.GetComponentInChildren<Renderer>().material.color = new Color(0, 128, 0);
             Debug.Log("Marker 200 calibrated successfully.");
         }
         if (isMarkerVisible(m400.transform.position)){
             positions[1] = m400.transform.position;
+            positions[1].y += planeZOffset;
             setPositions[1] = true;
             m400.GetComponentInChildren<Renderer>().material.color = new Color(0, 128, 0);
             Debug.Log("Marker 400 calibrated successfully.");
         }
         if (isMarkerVisible(m600.transform.position)){
             positions[2] = m600.transform.position;
+            positions[2].y += planeZOffset;
             setPositions[2] = true;
             m600.GetComponentInChildren<Renderer>().material.color = new Color(0, 128, 0);
             Debug.Log("Marker 600 calibrated successfully.");
         }
         if (isMarkerVisible(m800.transform.position)){
             positions[3] = m800.transform.position;
+            positions[3].y += planeZOffset;
             setPositions[3] = true;
             m800.GetComponentInChildren<Renderer>().material.color = new Color(0, 128, 0);
             Debug.Log("Marker 800 calibrated successfully.");

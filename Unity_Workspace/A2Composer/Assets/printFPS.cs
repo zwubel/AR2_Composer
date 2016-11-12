@@ -3,10 +3,10 @@ using System.Collections;
 
 public class printFPS : MonoBehaviour {
     float deltaTime = 0.0f;
+    Ovrvision ovr;
 
     // Use this for initialization
     void Start () {
-	
 	}
 	
 	// Update is called once per frame

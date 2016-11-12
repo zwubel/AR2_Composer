@@ -57,6 +57,7 @@ public class setupScene : MonoBehaviour {
         //point3.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
         table = GameObject.CreatePrimitive(PrimitiveType.Plane);
         table.GetComponent<MeshFilter>().mesh = createPlane(markerPositions);
+        table.transform.SetParent(parent.transform);
     }
 
     // Use this for initialization
