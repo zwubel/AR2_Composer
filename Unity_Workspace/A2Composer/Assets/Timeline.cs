@@ -21,8 +21,8 @@ public class Timeline : MonoBehaviour {
 		for(int f=0;f<fia.Length;f++){
 				files[f] = new FileInformation(fia[f]);
 				Debug.Log (files[f].fi.Name);
-				GameObject button = (GameObject)Instantiate(prefabButton);
-				button.transform.SetParent(TimeLineScrollView, false);
+			//	GameObject button = (GameObject)Instantiate(prefabButton);
+			//	button.transform.SetParent(TimeLineScrollView, false);
 		}
 
 
