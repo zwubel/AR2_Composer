@@ -50,19 +50,30 @@ public class save : MonoBehaviour {
 
 		Console.WriteLine("Display the modified XML document...");
 		Console.WriteLine(doc.OuterXml);
-	
 
-		traverseHirarchy(GameObject.Find("World"));
+
+		//Serialize (objects, filepath); 
+		traverseHirarchy(GameObject.Find("Marker"), root);
 		Debug.Log ("Objects crawled!");
 		Debug.Log ("Path: " + filepath);
 		doc.Save (filepath);
 	}
+	/*
+	public static void Serialize(object item, string path) {
+		XmlSerializer serializer = new XmlSerializer(item.GetType());
+		StreamWriter writer = new StreamWriter(path);
+		serializer.Serialize(writer.BaseStream, item);
+		writer.Close();
+	}
+	*/
 
 
-	void traverseHirarchy(GameObject obj){
+	void traverseHirarchy(GameObject obj, XmlNode parentNode){
 		
 		//if (obj.transform.childCount > 0) {
 			Debug.Log (obj.name + " Mother of Childs");
+
+
 			XmlNode newElem = doc.CreateNode("element", obj.name , "");  
 			
 			
@@ -74,19 +85,23 @@ public class save : MonoBehaviour {
 			newPos.InnerText =obj.transform.localPosition.x +", "+  obj.transform.localPosition.y +", "+ obj.transform.localPosition.z ;
 			newRotation.InnerText =obj.transform.localRotation.x +", "+  obj.transform.localRotation.y +", "+ obj.transform.localRotation.z ;
 			newScale.InnerText =obj.transform.localScale.x +", "+  obj.transform.localScale.y +", "+ obj.transform.localScale.z ;
-
+			foreach( Transform child in obj.transform)
+			{
+			//if(child.name == "Cube" || child.name == "Cube")
+			traverseHirarchy(child.gameObject,newElem );
+			}
 			newElem.AppendChild (newPos);
 			newElem.AppendChild (newRotation);
 			newElem.AppendChild (newScale);
-			root.AppendChild(newElem);
-		//}
-		foreach (Transform child in obj.transform)
-		{
-			traverseHirarchy(child.gameObject);
-		}
+			parentNode.AppendChild(newElem);
+
+
+
+
 
 
 	}
+
 
 	// Update is called once per fram
 	void Update () {
