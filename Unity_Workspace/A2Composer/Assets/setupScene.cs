@@ -10,42 +10,65 @@ public class setupScene : MonoBehaviour {
     GameObject table;
     public bool bypassNetwork = true;
     float frameIncrement = 0.0f;
+    GameObject parent;
 
     [Header("Scene Settings")]    
     public int maxMarkers = 256;
     //public Vector3 planeScale = new Vector3(-0.14f, 0.782f, 0.08f);
     //public Vector3 planePosition = new Vector3(-0.146f, 0.782f, 0.084f);
     public float markerScale = 0.5f;
-    [Header("Calibration Data")]
-    public Vector3 calPos = new Vector3(0.0f, 0.0f, 0.0f);
-    public Quaternion calRot = new Quaternion(0.0f, 0.0f, 0.0f, 0.0f);
-    public Vector3 calScale = new Vector3(1.0f, 1.0f, 1.0f);
-    public Component OVR;
+    [Header("Calibration")]
+    public TableCalibration tableCalib;
+    public Vector3[] planeEdges;
 
-    public void calibrationDone(){
-        calPos = OVR.transform.position;
-        //calScale = OVR.transform.localScale;
-        calRot = OVR.transform.rotation;
-        //table.transform.localScale = calScale;
-        table.transform.position = calPos;
-        table.transform.localRotation = calRot;
+    Mesh createPlane(Vector3[] positions)
+    {
+        Mesh m = new Mesh();
+        m.name = "ScriptedMesh";
+        m.vertices = new Vector3[] {
+         positions[0], positions[1], positions[2], positions[3]
+     };
+        m.uv = new Vector2[] {
+         new Vector2 (0, 0),
+         new Vector2 (0, 1),
+         new Vector2(1, 1),
+         new Vector2 (1, 0)
+     };
+        m.triangles = new int[] { 0, 1, 2, 0, 2, 3 };
+        m.RecalculateNormals();
+        return m;
+    }
+
+    public void calibrationDone(Vector3[] markerPositions){
+        // Create plane
+        //table = new Plane();
+        //table.Set3Points(markerPositions[0], markerPositions[1], markerPositions[2]);
+        //GameObject point0 = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        //point0.transform.position = markerPositions[0];
+        //point0.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
+        //GameObject point1 = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        //point1.transform.position = markerPositions[1];
+        //point1.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
+        //GameObject point2 = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        //point2.transform.position = markerPositions[2];
+        //point2.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
+        //GameObject point3 = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        //point3.transform.position = markerPositions[3];
+        //point3.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
+        table = GameObject.CreatePrimitive(PrimitiveType.Plane);
+        table.GetComponent<MeshFilter>().mesh = createPlane(markerPositions);
+        table.transform.SetParent(parent.transform);
     }
 
     // Use this for initialization
     void Start() {
+        tableCalib.enabled = false;
         // Initialization
         markerCubes = new GameObject[maxMarkers];
 
         // Create parent object (plane and cubes are attached to this)
-        GameObject parent = new GameObject();
+        parent = new GameObject();
         parent.transform.name = "Table Object";
-
-        // Create plane
-        table = GameObject.CreatePrimitive(PrimitiveType.Plane);
-        table.transform.SetParent(parent.transform);
-        table.transform.localScale = calScale;
-        table.transform.position = calPos;
-        table.transform.localRotation = calRot;
 
         // Create markers (cubes)
         for (int i = 0; i < maxMarkers; i++) {
@@ -59,6 +82,7 @@ public class setupScene : MonoBehaviour {
             markerCubes[i].GetComponent<Renderer>().material.color = new Color(0, 255, 0);
         }
         networkData = gameObject.GetComponent<readInNetworkData>();
+        tableCalib.enabled = true;
     }
 
     public void setMarkerArraySet(bool state) {
