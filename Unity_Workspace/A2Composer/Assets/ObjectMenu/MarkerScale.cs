@@ -3,7 +3,7 @@ using System.Collections;
 
 public class MarkerScale : MonoBehaviour {
 
-    // NOTE that Z in our understanding equals Y in Unity!
+    // NOTE: Z is Y in Unity!
     private GameObject xHandle;
     private GameObject yHandle;
     private GameObject zHandle;
@@ -34,13 +34,6 @@ public class MarkerScale : MonoBehaviour {
             newScale.y = 1;
             yHandle.transform.position = new Vector3(yHandle.transform.position.x, yHandle.transform.position.y, originalPosXY.y);
         }
-        //newScale.z = -zHandle.transform.position.z + originalPosXY.y + 1.0f;
-        //if (newScale.y < 1)
-        //{
-        //    newScale.y = 1;
-        //    yHandle.transform.position = new Vector3(yHandle.transform.position.x, yHandle.transform.position.y, originalPosXY.y);
-        //}
-
         this.transform.localScale = new Vector3(newScale.x, this.transform.localScale.y, newScale.y);
         zHandle.transform.position = new Vector3(originalPosZ.x - newScale.x + 1.0f, zHandle.transform.position.y, originalPosZ.y - newScale.y + 1.0f);
     }
