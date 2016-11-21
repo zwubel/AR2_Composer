@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/ObjectMenu/ObjectMenu.unity
+- path: Assets/AR2_Composer.unity
   isLoaded: 1
   isActive: 1

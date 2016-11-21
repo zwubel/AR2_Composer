@@ -18,7 +18,7 @@ public class readInNetworkData : MonoBehaviour {
     public Int32 Port = 10000;
     [Header("Data Stream Settings")]
     public int maxMarkerCount = 1;
-    public int bytesPerMarker = 16;
+    public int bytesPerMarker = 20;
 
     // Return markers array (used by setupScene.cs)
     public Marker[] getMarkers() {
@@ -27,7 +27,7 @@ public class readInNetworkData : MonoBehaviour {
 
     // Initialization
     void Start(){
-        bufferLength = bytesPerMarker * maxMarkerCount + 4;
+        bufferLength = bytesPerMarker * maxMarkerCount + 4; // +4 because ID=-1 marks end of frame
         markers = new Marker[maxMarkerCount + 1];
         setupScene = gameObject.GetComponent<setupScene>();
         setupSocket();
@@ -60,15 +60,16 @@ public class readInNetworkData : MonoBehaviour {
                     if (curID == -1){ // End of frame reached?
                         Debug.Log("Last masker reached, suspending loop for current frame " + frameCounter + ".");
                         frameCounter++;
-                        markers[i / bytesPerMarker + 1] = new Marker(-1, 0.0f, 0.0f, 0.0f);
+                        markers[i / bytesPerMarker + 1] = new Marker(-1, 0.0f, 0.0f, 0.0f, 0);
                         break;
                     }else if(curID < 0){
                         Debug.LogError("Marker ID not valid: " + curID);
-                    }else { // if (curID == i / bytesPerMarker + 1){
+                    }else {
                         float curPosX = System.BitConverter.ToSingle(buffer, i + 4); // X-position
                         float curPosY = System.BitConverter.ToSingle(buffer, i + 8); // Y-position
                         float curAngle = System.BitConverter.ToSingle(buffer, i + 12); // Angle
-                        markers[i / bytesPerMarker] = new Marker(curID, curPosX, curPosY, curAngle); // Add new marker to array
+                        int status = System.BitConverter.ToInt32(buffer, i + 16); // isVisible
+                        markers[i / bytesPerMarker] = new Marker(curID, curPosX, curPosY, curAngle, status); // Add new marker to array
                         oneMarkerSet = true;
                         Debug.Log(markers[i / bytesPerMarker].toStr()); // Print debug message containing marker data
                     }
