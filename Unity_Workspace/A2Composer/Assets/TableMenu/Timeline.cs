@@ -20,15 +20,19 @@ public class Timeline : MonoBehaviour {
 		FileInfo[] fia = currentDirectory.GetFiles();
 		//FileInfo[] fia = searchDirectory(di,searchPattern);
 		files = new FileInformation[fia.Length];
+		int count=0;
 		for(int f=0;f<fia.Length;f++){
 			files[f] = new FileInformation(fia[f]);
-			Debug.Log (files[f].fi.Name);
-			GameObject button = (GameObject)Instantiate(prefabButton.gameObject);
-			button.name = files [f].fi.Name;
-			button.GetComponentInChildren<Text>().text =button.name;
-			button.transform.SetParent(TimeLineScrollView.transform, false);
-			button.transform.localPosition = new Vector3 (0, -f * 20,0);
-			Debug.Log ("reading file: " + button.name);
+			//Debug.Log (files[f].fi.Name);
+			if(!files[f].fi.Name.Contains("meta")&&files[f].fi.Name.Contains(".xml")){
+				count++;
+				GameObject button = (GameObject)Instantiate(prefabButton.gameObject);
+				button.name = files [f].fi.Name;
+				button.GetComponentInChildren<Text>().text =button.name;
+				button.transform.SetParent(TimeLineScrollView.transform, false);
+				button.transform.localPosition = new Vector3 (0, -count * 40,0);
+				Debug.Log ("reading file: " + button.name);
+			}
 
 		}
 
