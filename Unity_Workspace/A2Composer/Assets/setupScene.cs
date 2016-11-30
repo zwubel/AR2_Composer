@@ -13,7 +13,7 @@ public class setupScene : MonoBehaviour {
     GameObject parent;
     private Vector3[] tablePositions;
 
-    [Header("Scene Settings")]    
+    [Header("Scene Settings")]
     public int maxMarkers = 100;
     //public Vector3 planeScale = new Vector3(-0.14f, 0.782f, 0.08f);
     //public Vector3 planePosition = new Vector3(-0.146f, 0.782f, 0.084f);
@@ -21,8 +21,7 @@ public class setupScene : MonoBehaviour {
     [Header("Calibration")]
     public TableCalibration tableCalib;
 
-    Mesh createPlane(Vector3[] positions)
-    {
+    Mesh createPlane(Vector3[] positions){
         Mesh m = new Mesh();
         m.name = "ScriptedMesh";
         m.vertices = new Vector3[] {positions[0], positions[1], positions[2], positions[3]};
