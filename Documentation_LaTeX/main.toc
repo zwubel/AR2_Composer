@@ -1,5 +1,0 @@
-\select@language {ngerman}
-\contentsline {section}{\numberline {1}Deckblatt}{1}{section.1}
-\contentsline {section}{\numberline {2}Die Klaue des Tigers}{2}{section.2}
-\contentsline {subsection}{\numberline {2.1}Und deren Bedeutung in der deutschen Literatur}{2}{subsection.2.1}
-\contentsline {section}{\numberline {3}Die Anatomie der Tiger Klaue}{3}{section.3}
