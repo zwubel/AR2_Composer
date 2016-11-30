@@ -3,18 +3,21 @@ using System.Collections;
 
 public class TableCalibration : MonoBehaviour {
 
-    public Vector3[] positions;
-    public bool[] setPositions;
+    private Vector3[] positions;
+    private bool[] setPositions;
     private GameObject m200;
     private GameObject m400;
     private GameObject m600;
     private GameObject m800;
     public setupScene setupScene;
-    public float planeZOffset;
+    public float planeZOffset = -0.15f;
+
+    public Vector3[] getPositions(){
+        return positions;
+    }
 
     // Use this for initialization
     void Start () {
-        planeZOffset = -0.15f;
         positions = new Vector3[4];
         setPositions = new bool[4] { false, false, false, false };
         m200 = GameObject.Find("OvrvisionTracker200");
@@ -67,6 +70,35 @@ public class TableCalibration : MonoBehaviour {
     // Update is called once per frame
     void Update () {
         if (setPositions[0] && setPositions[1] && setPositions[2] && setPositions[3]){
+            // Force the calibrated plane to be a rectangle
+            Vector2 center = new Vector2(   positions[0].x * 0.25f +
+                                            positions[1].x * 0.25f +
+                                            positions[2].x * 0.25f +
+                                            positions[3].x * 0.25f,
+                                            positions[0].z * 0.25f +
+                                            positions[1].z * 0.25f +
+                                            positions[2].z * 0.25f +
+                                            positions[3].z * 0.25f
+                                         );
+            if (positions[0].x - center.x <= positions[3].x - center.x)
+                positions[3].x = positions[0].x;
+            else
+                positions[0].x = positions[3].x;
+
+            if (positions[1].x - center.x <= positions[2].x - center.x)
+                positions[2].x = positions[1].x;
+            else
+                positions[1].x = positions[2].x;
+
+            if (positions[0].z - center.y <= positions[3].z - center.y)
+                positions[3].z = positions[0].z;
+            else
+                positions[0].z = positions[3].z;
+            if (positions[1].z - center.y <= positions[2].z - center.y)
+                positions[2].z = positions[1].z;
+            else
+                positions[1].z = positions[2].z;
+
             Debug.Log("Calibration successful.");
             setupScene.calibrationDone(positions);
             m200.SetActive(false);

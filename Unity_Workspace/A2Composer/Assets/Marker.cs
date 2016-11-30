@@ -4,12 +4,14 @@
         private float posX;
         private float posY;
         private float angle;
+        private int status;
 
-        public Marker(int ID, float posX, float posY, float angle){
+        public Marker(int ID, float posX, float posY, float angle, int status){
             this.ID = ID;
             this.posX = posX;
             this.posY = posY;
             this.angle = angle;
+            this.status = status;
         }
 
         public int getID(){
@@ -28,6 +30,10 @@
             return this.angle;
         }
 
+        public int getStatus(){
+            return this.status;
+        }
+
         public void setID(int ID){
             this.ID = ID;
         }
@@ -44,11 +50,14 @@
             this.angle = angle;
         }
 
-    public string toStr()
-        {
+        public void setStatus(int status){
+            this.status = status;
+        }
+
+        public string toStr(){
             return "Marker " + this.ID + " data:\n" +
                 "\tPosition: (" + this.posX + "/" + this.posY + ")\n" +
-                "\tAngle: " + this.angle;
+                "\tAngle: " + this.angle + "\n\tStatus: " + status;
         }
 
     void Start () {}
