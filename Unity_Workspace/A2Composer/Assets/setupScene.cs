@@ -24,7 +24,7 @@ public class setupScene : MonoBehaviour {
     Mesh createPlane(Vector3[] positions){
         Mesh m = new Mesh();
         m.name = "ScriptedMesh";
-        m.vertices = new Vector3[] {positions[0], positions[1], positions[2], positions[3]};
+        m.vertices = new Vector3[] {positions[1], positions[0], positions[3], positions[2]};
         m.uv = new Vector2[] {
          new Vector2 (0, 0),
          new Vector2 (0, 1),
@@ -37,10 +37,21 @@ public class setupScene : MonoBehaviour {
     }
 
     public void calibrationDone(Vector3[] markerPositions){
+        tablePositions = markerPositions;
         table = GameObject.CreatePrimitive(PrimitiveType.Plane);
-        table.GetComponent<MeshFilter>().mesh = createPlane(markerPositions);
-        table.transform.SetParent(parent.transform);
-        tablePositions = tableCalib.getPositions();
+        table.GetComponent<MeshFilter>().mesh = createPlane(tablePositions);
+        table.transform.SetParent(parent.transform);        
+
+        //GameObject plane = new GameObject("Plane");
+        //MeshFilter meshFilter = (MeshFilter)plane.AddComponent(typeof(MeshFilter));
+        //meshFilter.mesh = CreateMesh(1, 0.2f);
+        //MeshRenderer renderer = plane.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
+        //renderer.material.shader = Shader.Find("Particles/Additive");
+        //Texture2D tex = new Texture2D(1, 1);
+        //tex.SetPixel(0, 0, Color.green);
+        //tex.Apply();
+        //renderer.material.mainTexture = tex;
+        //renderer.material.color = Color.green;
     }
 
     // Use this for initialization
