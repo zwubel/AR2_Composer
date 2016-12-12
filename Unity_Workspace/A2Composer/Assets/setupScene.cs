@@ -15,32 +15,35 @@ public class setupScene : MonoBehaviour {
 
     [Header("Scene Settings")]
     public int maxMarkers = 100;
+    public float widthScale = 1;
+    public float heightScale = 1;
     //public Vector3 planeScale = new Vector3(-0.14f, 0.782f, 0.08f);
     //public Vector3 planePosition = new Vector3(-0.146f, 0.782f, 0.084f);
     public float markerScale = 0.5f;
     [Header("Calibration")]
     public TableCalibration tableCalib;
 
-    Mesh createPlane(Vector3[] positions){
-        Mesh m = new Mesh();
-        m.name = "ScriptedMesh";
-        m.vertices = new Vector3[] {positions[1], positions[0], positions[3], positions[2]};
-        m.uv = new Vector2[] {
-         new Vector2 (0, 0),
-         new Vector2 (0, 1),
-         new Vector2(1, 1),
-         new Vector2 (1, 0)
-     };
-        m.triangles = new int[] { 0, 1, 2, 0, 2, 3 };
-        m.RecalculateNormals();
-        return m;
-    }
+    //Mesh createPlane(Vector3[] positions){
+    //    Mesh m = new Mesh();
+    //    m.name = "ScriptedMesh";
+    //    m.vertices = new Vector3[] {positions[1], positions[0], positions[3], positions[2]};
+    //    m.uv = new Vector2[] {
+    //     new Vector2 (0, 0),
+    //     new Vector2 (0, 1),
+    //     new Vector2(1, 1),
+    //     new Vector2 (1, 0)
+    // };
+    //    m.triangles = new int[] { 0, 1, 2, 0, 2, 3 };
+    //    m.RecalculateNormals();
+    //    return m;
+    //}
 
     public void calibrationDone(Vector3[] markerPositions, Vector3 center, float width, float height){
         tablePositions = markerPositions;
         table = GameObject.CreatePrimitive(PrimitiveType.Plane);
-        table.transform.position = center;
-        table.transform.localScale = new Vector3(width, 1, height);
+        Debug.Log("center: " + center.x + ", " + center.y + ", " + center.z);
+        table.transform.position = new Vector3(center.x, center.y, center.z);
+        table.transform.localScale = new Vector3(width * widthScale, 1, heightScale);
         //Mesh planeMesh = createPlane(tablePositions);
         //table.GetComponent<MeshFilter>().mesh = planeMesh;
         
