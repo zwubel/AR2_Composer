@@ -4,6 +4,7 @@ using System.Collections;
 public class TableCalibration : MonoBehaviour {
 
     private Vector3[] positions;
+    private Vector3 center;
     private bool[] setPositions;
     private GameObject m200;
     private GameObject m400;
@@ -98,9 +99,13 @@ public class TableCalibration : MonoBehaviour {
                 positions[2].z = positions[1].z;
             else
                 positions[1].z = positions[2].z;
+            float y = (positions[0].y + positions[1].y + positions[2].y + positions[3].y) / 4;
+            center = new Vector3(center.x, y, center.y);
 
             Debug.Log("Calibration successful.");
-            setupScene.calibrationDone(positions);
+            float width = positions[0].x - positions[1].x;
+            float height = positions[3].z - positions[0].z;
+            setupScene.calibrationDone(positions, center, width, height);
             m200.SetActive(false);
             m400.SetActive(false);
             m600.SetActive(false);

@@ -36,11 +36,15 @@ public class setupScene : MonoBehaviour {
         return m;
     }
 
-    public void calibrationDone(Vector3[] markerPositions){
+    public void calibrationDone(Vector3[] markerPositions, Vector3 center, float width, float height){
         tablePositions = markerPositions;
         table = GameObject.CreatePrimitive(PrimitiveType.Plane);
-        table.GetComponent<MeshFilter>().mesh = createPlane(tablePositions);
-        table.transform.SetParent(parent.transform);        
+        table.transform.position = center;
+        table.transform.localScale = new Vector3(width, 1, height);
+        //Mesh planeMesh = createPlane(tablePositions);
+        //table.GetComponent<MeshFilter>().mesh = planeMesh;
+        
+        table.transform.SetParent(parent.transform);
 
         //GameObject plane = new GameObject("Plane");
         //MeshFilter meshFilter = (MeshFilter)plane.AddComponent(typeof(MeshFilter));
