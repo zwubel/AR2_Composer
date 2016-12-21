@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System;
 using System.Net.Sockets;
+using UnityEngine.UI;
 
 public class readInNetworkData : MonoBehaviour {
     Boolean socketReady = false;
@@ -15,6 +16,7 @@ public class readInNetworkData : MonoBehaviour {
     long frameCounter = 0;
     bool oneMarkerSet = false;
     setupScene setupScene;
+    Text TCPText;
 
     [Header("Socket Settings")]
     public String Host = "192.168.0.5";
@@ -30,6 +32,7 @@ public class readInNetworkData : MonoBehaviour {
 
     // Initialization
     void Start(){
+        TCPText = GameObject.Find("TCPText").GetComponent<Text>();
         readBufferLength = bytesPerMarker * maxMarkerCount + 4; // +4 because ID=-1 marks end of frame
         writeBufferLength = 4;
         writeStatus = 0;
@@ -83,7 +86,8 @@ public class readInNetworkData : MonoBehaviour {
                             int status = System.BitConverter.ToInt32(readBuffer, i + 16); // isVisible
                             markers[i / bytesPerMarker] = new Marker(curID, curPosX, curPosY, curAngle, status); // Add new marker to array
                             oneMarkerSet = true;
-                            Debug.Log(markers[i / bytesPerMarker].toStr()); // Print debug message containing marker data
+                            //Debug.Log(markers[i / bytesPerMarker].toStr()); // Print debug message containing marker data
+                            TCPText.text = markers[i / bytesPerMarker].toStr();
                         }
                     }
                     if (oneMarkerSet)
